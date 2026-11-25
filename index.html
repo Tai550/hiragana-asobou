@@ -18,6 +18,10 @@
         --teal:#0E9594; --yellow:#FFC53D; --pink:#F15BB5; --green:#43AA5B; --blue:#3E7CB1;
         --shadow:0 4px 0 rgba(51,48,43,.12);
         --radius:20px;
+        /* Shared size for the stroke-order model and the tracing area:
+           both boxes — and the kana drawn inside them — stay exactly
+           the same size, large enough not to hide under a child's hand. */
+        --write-size:min(88vw,430px);
       }
       @media (prefers-color-scheme: dark){
         :root{
@@ -229,13 +233,13 @@
       /* ---- Writing ---- */
       .write-layout{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; }
       .canvas-box{
-        position:relative; width:min(82vw,340px); height:min(82vw,340px);
+        position:relative; width:var(--write-size); height:var(--write-size);
         background:var(--panel); border:3px solid var(--line); border-radius:22px; overflow:hidden;
         flex:0 0 auto;
       }
       .canvas-box .ghost{
         position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-        font-size:min(60vw,258px); font-weight:600; color:var(--ink); opacity:.13; line-height:1;
+        font-size:calc(var(--write-size) * .75); font-weight:600; color:var(--ink); opacity:.13; line-height:1;
         pointer-events:none; user-select:none;
         font-family:"Klee One","Hiragino Mincho ProN","YuMincho","Yu Mincho",serif;
       }
@@ -255,14 +259,16 @@
       /* ---- Stroke-order animation ---- */
       .write-main{ display:flex; flex-direction:row; flex-wrap:wrap; gap:14px; flex:0 1 auto; align-items:flex-start; justify-content:center; }
       .stroke-box{
-        width:min(82vw,340px); background:var(--panel); border:3px solid var(--blue);
+        width:var(--write-size); background:var(--panel); border:3px solid var(--blue);
         border-radius:22px; overflow:hidden; box-shadow:var(--shadow);
       }
       .stroke-head{
         background:var(--blue); color:#fff; font-weight:800; font-size:16px;
         text-align:center; padding:8px 10px;
       }
-      .stroke-stage{ padding:10px 12px 4px; }
+      /* No side padding, so the model's drawing area is exactly as wide
+         (and tall) as the tracing area next to it. */
+      .stroke-stage{ padding:10px 0 4px; }
       #strokeSvg{ width:100%; height:auto; display:block; }
       #strokeSvg .so-grid{ stroke:var(--line); stroke-width:1; stroke-dasharray:4 4; }
       #strokeSvg .so-ghost{ fill:none; stroke:var(--ink); opacity:.13; stroke-width:6; stroke-linecap:round; stroke-linejoin:round; }
@@ -345,9 +351,11 @@
         .gojuon{ gap:7px; }
         .gojuon .kana-card{ min-height:7.4vh; padding:3px 1px 2px; }
         .gojuon .kana-card .k{ font-size:clamp(22px,4.6vh,36px); }
-        .canvas-box{ width:min(82vw,320px,34vh); height:min(82vw,320px,34vh); }
-        .stroke-box{ width:min(82vw,320px,34vh); }
-        .canvas-box .ghost{ font-size:min(56vw,242px,25vh); }
+        /* Landscape used to shrink both boxes to 34vh, which made the
+           tracing area small enough to hide under the child's hand.
+           Keep the shared full size instead; the page may scroll, and
+           the action bar stays pinned to the bottom. */
+        :root{ --write-size:min(46vw,430px,76vh); }
         .kana-picker{ margin-top:10px; gap:5px; }
         .kana-picker button{ width:38px; height:38px; font-size:18px; }
       }
